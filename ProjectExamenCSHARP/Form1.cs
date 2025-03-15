@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -57,12 +59,43 @@ namespace ProjectExamenCSHARP
 
                 db.Users.Add(user);
                 db.SaveChanges();
+                EnvoyerEmail(email, password);
 
                 effacer();
                 MessageBox.Show("L'utilisateur a été enregistré.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 actualiser();
             }
         }
+
+        private void EnvoyerEmail(string destinataire, string mdp)
+        {
+            try
+            {
+                // Définir l'expéditeur et le destinataire
+                MailMessage message = new MailMessage();
+                message.From = new MailAddress("cheickhtidianendiaye@gmail.com");
+                message.To.Add(destinataire);
+                message.Subject = "Sujet de l'email";
+                message.Body = "Bonjour "+mdp +" est ton mot de passe par default il faudra le changer .";
+                message.IsBodyHtml = false; // Mettre true si le corps est en HTML
+
+                // Configurer le client SMTP
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com");
+                smtp.Port = 587;
+                smtp.Credentials = new NetworkCredential("cheickhtidianendiaye@gmail.com", "lzfm hsaw ogob jejy");
+                smtp.EnableSsl = true;
+
+                // Envoyer l'email
+                smtp.Send(message);
+
+                MessageBox.Show("Email envoyé avec succès !");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur : " + ex.Message);
+            }
+        }
+
         //pour le chargement des information des users dans le data grid view
         private void actualiser()
         {
